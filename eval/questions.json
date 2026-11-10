@@ -1,0 +1,19 @@
+[
+  {"id": "mrr", "question": "What was total MRR on 2026-09-01?",
+   "truth": "SELECT SUM(mrr) FROM subscription_months WHERE month_start = '2026-09-01'"},
+  {"id": "customers", "question": "How many distinct customers are there after merging accounts across brands?",
+   "truth": "SELECT COUNT(DISTINCT customer_id) FROM identity_map"},
+  {"id": "multi_brand", "question": "How many customers have accounts on more than one brand?",
+   "truth": "SELECT COUNT(*) FROM customer_360 WHERE brands > 1"},
+  {"id": "top_decline", "question": "Which decline code causes the most failed first payment attempts, and how many?",
+   "truth": "SELECT COUNT(*) FROM billing_cycles WHERE first_decline = 'insufficient_funds'",
+   "must_mention": "insufficient"},
+  {"id": "involuntary_sep", "question": "How many subscriptions ended in September 2026 because payment failed?",
+   "truth": "SELECT COUNT(*) FROM subscriptions WHERE end_reason = 'payment_failed' AND ended_at BETWEEN '2026-09-01' AND '2026-09-30'"},
+  {"id": "expired_recovery", "question": "Of billing cycles whose first attempt failed with expired_card and whose retries are finished, what percentage were eventually paid?",
+   "truth": "SELECT 100.0 * SUM(paid) / COUNT(*) FROM billing_cycles WHERE first_decline = 'expired_card' AND (paid = 1 OR attempts = 4)"},
+  {"id": "tv_active", "question": "How many tv subscriptions are active right now (not ended)?",
+   "truth": "SELECT COUNT(*) FROM subscriptions WHERE brand = 'tv' AND ended_at IS NULL"},
+  {"id": "top_customer", "question": "What is the highest lifetime revenue of a single customer?",
+   "truth": "SELECT MAX(lifetime_revenue) FROM customer_360"}
+]
